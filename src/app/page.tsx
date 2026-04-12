@@ -4,6 +4,7 @@ import { PlaceCard } from '@/components/place-card'
 
 type Place = {
   id: number
+  slug: string | null
   name: string
   town: string | null
   category: string | null
@@ -39,7 +40,7 @@ export default async function Home({ searchParams }: HomeProps) {
   let query = supabase
     .from('places')
     .select(
-      'id, name, town, category, price_label, short_blurb, distance_minutes, free, parking_label, coffee_label, indoor, outdoor, scoot_friendly'
+      'id, slug, name, town, category, price_label, short_blurb, distance_minutes, free, parking_label, coffee_label, indoor, outdoor, scoot_friendly'
     )
     .order('distance_minutes', { ascending: true, nullsFirst: false })
 

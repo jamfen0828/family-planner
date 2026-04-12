@@ -1,7 +1,10 @@
+import Link from 'next/link'
+
 type PlaceCardProps = {
   place: {
     id: number
     name: string
+    slug: string | null
     town: string | null
     category: string | null
     price_label: string | null
@@ -17,8 +20,13 @@ type PlaceCardProps = {
 }
 
 export function PlaceCard({ place }: PlaceCardProps) {
+  const href = place.slug ? `/places/${place.slug}` : '#'
+
   return (
-    <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
+    <Link
+      href={href}
+      className="block rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
@@ -79,6 +87,6 @@ export function PlaceCard({ place }: PlaceCardProps) {
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
