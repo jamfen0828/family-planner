@@ -39,7 +39,10 @@ export default async function PlacePage({ params }: PlacePageProps) {
       changing_facilities,
       food_available,
       website_url,
-      website_notes
+      website_notes,
+      subcategory,
+      source_name,
+      source_url
     `)
     .eq('slug', slug)
     .maybeSingle()
@@ -70,7 +73,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
 
         <section className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-            {place.category ?? 'Place'}
+            {place.subcategory ?? place.category ?? 'Place'}
           </p>
 
           <div className="mt-2 flex items-start justify-between gap-3">
