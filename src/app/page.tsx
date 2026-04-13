@@ -80,6 +80,14 @@ export default async function Home({ searchParams }: HomeProps) {
           <p className="text-sm font-medium text-neutral-500">
             Marlow family planner
           </p>
+          <div className="mt-4">
+            <Link
+              href="/admin"
+              className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
+            >
+              Open admin review
+            </Link>
+          </div>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-neutral-950">
             What can we do today?
           </h1>
