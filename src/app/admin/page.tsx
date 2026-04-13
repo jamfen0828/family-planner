@@ -82,14 +82,23 @@ export default async function AdminPage() {
   return (
     <main className="min-h-screen bg-neutral-50 p-4 md:p-6">
       <div className="mx-auto max-w-5xl">
-        <header>
-          <p className="text-sm font-medium text-neutral-500">Internal admin</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-neutral-950">
-            Place review board
-          </h1>
-          <p className="mt-2 text-sm text-neutral-600">
-            Use this to spot missing data before you publish more listings.
-          </p>
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <p className="text-sm font-medium text-neutral-500">Internal admin</p>
+                <h1 className="mt-1 text-3xl font-semibold tracking-tight text-neutral-950">
+                Place review board
+                </h1>
+                <p className="mt-2 text-sm text-neutral-600">
+                Use this to spot missing data before you publish more listings.
+                </p>
+            </div>
+
+            <Link
+                href="/admin/new"
+                className="inline-flex rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white"
+            >
+                Add new place
+            </Link>
         </header>
 
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
