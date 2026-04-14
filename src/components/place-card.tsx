@@ -7,6 +7,7 @@ type PlaceCardProps = {
     slug: string | null
     town: string | null
     category: string | null
+    subcategory: string | null
     price_label: string | null
     short_blurb: string | null
     distance_minutes: number | null
@@ -30,7 +31,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-            {place.category ?? 'Place'}
+            {place.subcategory ?? place.category ?? 'Place'}
           </p>
           <h2 className="mt-1 text-lg font-semibold text-neutral-900">
             {place.name}

@@ -1,7 +1,16 @@
 import Link from 'next/link'
 import { createPlace } from '../actions'
+import { redirect } from 'next/navigation'
+import { hasAdminSession } from '@/lib/admin-auth'
 
-export default function NewPlacePage() {
+export default async function NewPlacePage() {
+
+  const isAuthed = await hasAdminSession()
+
+  if (!isAuthed) {
+    redirect('/admin/login')
+  }
+
   return (
     <main className="min-h-screen bg-neutral-50 p-4">
       <div className="mx-auto max-w-2xl">
