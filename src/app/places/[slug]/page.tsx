@@ -2,6 +2,26 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
+function formatAgeRange(ageMin: number | null, ageMax: number | null) {
+  if (ageMin === null && ageMax === null) return 'All ages'
+
+  if (ageMin !== null && ageMax !== null) {
+    if (ageMax <= 4) return '4 and under'
+    if (ageMin >= 5) return `${ageMin}+`
+    return `Ages ${ageMin}–${ageMax}`
+  }
+
+  if (ageMax !== null) {
+    return `${ageMax} and under`
+  }
+
+  if (ageMin !== null) {
+    return `${ageMin}+`
+  }
+
+  return 'All ages'
+}
+
 type PlacePageProps = {
   params: Promise<{
     slug: string
@@ -72,9 +92,11 @@ export default async function PlacePage({ params }: PlacePageProps) {
         </Link>
 
         <section className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-            {place.subcategory ?? place.category ?? 'Place'}
-          </p>
+          <div>
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+              {place.subcategory ?? place.category ?? 'Place'}
+            </span>
+          </div>
 
           <div className="mt-2 flex items-start justify-between gap-3">
             <div>
@@ -88,7 +110,9 @@ export default async function PlacePage({ params }: PlacePageProps) {
             </div>
 
             <div className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700">
-              {place.free ? 'Free' : place.price_label ?? 'Paid'}
+              {place.free
+                ? 'Free'
+                : place.price_label ?? 'Price not specified'}
             </div>
           </div>
 
@@ -99,59 +123,54 @@ export default async function PlacePage({ params }: PlacePageProps) {
           ) : null}
         </section>
 
+        <section className="mt-4 flex flex-wrap gap-2">
+          {place.free && (
+            <span className="rounded-full bg-neutral-900 px-3 py-1 text-xs font-medium text-white">
+              Free
+            </span>
+          )}
+
+          {place.outdoor && (
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-800">
+              Outdoor
+            </span>
+          )}
+
+          {place.indoor && (
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-800">
+              Indoor
+            </span>
+          )}
+
+          {place.scoot_friendly && (
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-800">
+              Scoot friendly
+            </span>
+          )}
+        </section>
+
         <section className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-neutral-900">At a glance</h2>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {place.indoor ? (
-              <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
-                Indoor
-              </span>
-            ) : null}
-
-            {place.outdoor ? (
-              <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
-                Outdoor
-              </span>
-            ) : null}
-
-            {place.scoot_friendly ? (
-              <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
-                Scoot friendly
-              </span>
-            ) : null}
-
-            {place.bike_friendly ? (
-              <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
-                Bike friendly
-              </span>
-            ) : null}
-
-            {place.buggy_friendly ? (
-              <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
-                Buggy friendly
-              </span>
-            ) : null}
-
-            {place.booking_required ? (
-              <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
-                Booking required
-              </span>
-            ) : null}
-          </div>
 
           <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl bg-neutral-50 p-3">
             <div>
               <p className="text-xs text-neutral-500">Parking</p>
               <p className="mt-1 text-sm font-medium text-neutral-900">
-                {place.parking_label ?? 'Unknown'}
+                {place.parking_label === 'Easy' && 'Easy parking'}
+                {place.parking_label === 'Limited' && 'Limited parking'}
+                {place.parking_label === 'Tricky' && 'Tricky parking'}
+                {place.parking_label === 'None' && 'No parking'}
+                {!place.parking_label && 'Unknown'}
               </p>
             </div>
 
             <div>
               <p className="text-xs text-neutral-500">Coffee</p>
               <p className="mt-1 text-sm font-medium text-neutral-900">
-                {place.coffee_label ?? 'Unknown'}
+                {place.coffee_label === 'Good' && 'Good coffee'}
+                {place.coffee_label === 'Basic' && 'Basic coffee'}
+                {place.coffee_label === 'None' && 'No coffee'}
+                {!place.coffee_label && 'Unknown'}
               </p>
             </div>
 
@@ -179,7 +198,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
             <div>
               <p className="text-xs text-neutral-500">Ages</p>
               <p className="mt-1 text-sm font-medium text-neutral-900">
-                {place.age_min ?? '?'}–{place.age_max ?? '?'}
+                {formatAgeRange(place.age_min, place.age_max)}
               </p>
             </div>
           </div>
@@ -207,8 +226,10 @@ export default async function PlacePage({ params }: PlacePageProps) {
 
         {place.website_notes ? (
           <section className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-semibold text-neutral-900">Parent note</h2>
-            <p className="mt-3 text-sm leading-6 text-neutral-700">
+            <h2 className="text-lg font-semibold text-neutral-900">
+              Why parents like it
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-neutral-800">
               {place.website_notes}
             </p>
           </section>
