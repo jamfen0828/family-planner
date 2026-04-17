@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { SaveButton } from '@/components/save-button'
 
 function formatAgeRange(ageMin: number | null, ageMax: number | null) {
   if (ageMin === null && ageMax === null) return 'All ages'
@@ -84,12 +85,16 @@ export default async function PlacePage({ params }: PlacePageProps) {
   return (
     <main className="min-h-screen bg-neutral-50 p-4">
       <div className="mx-auto max-w-md">
-        <Link
-          href="/"
-          className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
-        >
-          ← Back
-        </Link>
+        <div className="flex items-center justify-between gap-3">
+          <Link
+            href="/"
+            className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
+          >
+            ← Back
+          </Link>
+
+          {place.slug ? <SaveButton slug={place.slug} variant="detail" /> : null}
+        </div>
 
         <section className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
           <div>

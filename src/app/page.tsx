@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PlaceCard } from '@/components/place-card'
 
+
 type Place = {
   id: number
   slug: string | null
@@ -193,6 +194,21 @@ export default async function Home({ searchParams }: HomeProps) {
           <p className="mt-2 text-sm leading-6 text-neutral-600">
             Quick ideas for days out with kids, without the endless searching.
           </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link
+              href="/saved"
+              className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
+            >
+              Saved places
+            </Link>
+
+            <Link
+              href="/admin"
+              className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
+            >
+              Open admin review
+            </Link>
+          </div>
         </header>
 
         <section className="mt-5">

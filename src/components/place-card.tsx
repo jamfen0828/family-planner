@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SaveButton } from '@/components/save-button'
 
 type PlaceCardProps = {
   place: {
@@ -42,8 +43,12 @@ export function PlaceCard({ place }: PlaceCardProps) {
           </p>
         </div>
 
-        <div className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700">
-          {place.free ? 'Free' : place.price_label ?? 'Paid'}
+        <div className="flex items-center gap-2">
+          <div className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700">
+            {place.free ? 'Free' : place.price_label ?? 'Paid'}
+          </div>
+
+          {place.slug ? <SaveButton slug={place.slug} /> : null}
         </div>
       </div>
 
