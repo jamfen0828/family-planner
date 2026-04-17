@@ -203,6 +203,13 @@ export default async function Home({ searchParams }: HomeProps) {
             </Link>
 
             <Link
+              href="/map"
+              className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
+            >
+              Map view
+            </Link>
+
+            <Link
               href="/admin"
               className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
             >
