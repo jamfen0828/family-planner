@@ -64,8 +64,8 @@ function createPlaceIcon(emoji: string) {
     className: '',
     html: `
       <div style="
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -73,14 +73,15 @@ function createPlaceIcon(emoji: string) {
         border: 2px solid #111827;
         border-radius: 9999px;
         font-size: 18px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        line-height: 1;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.18);
       ">
         ${emoji}
       </div>
     `,
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
-    popupAnchor: [0, -18],
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [0, -20],
   })
 }
 

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PlacesMapWrapper } from '@/components/places-map-wrapper'
+import { MapLegend } from '@/components/map-legend'
 
 type Place = {
   id: number
@@ -306,7 +307,10 @@ export default async function MapPage({ searchParams }: MapPageProps) {
         </div>
 
         {places.length > 0 ? (
-          <PlacesMapWrapper places={places} />
+          <div className="space-y-4">
+            <MapLegend />
+            <PlacesMapWrapper places={places} />
+          </div>
         ) : (
           <div className="rounded-3xl bg-white p-6 text-sm text-neutral-600 shadow-sm">
             No places match these map filters yet.
