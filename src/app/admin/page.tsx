@@ -1,8 +1,13 @@
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { redirect } from 'next/navigation'
 import { hasAdminSession } from '@/lib/admin-auth'
-import { logoutAdmin } from './auth-actions'
+import { redirect } from 'next/navigation'
+
+type AdminPageProps = {
+  searchParams?: Promise<{
+    filter?: string
+  }>
+}
 
 type Place = {
   id: number
@@ -21,6 +26,8 @@ type Place = {
   source_name: string | null
   source_url: string | null
   distance_minutes: number | null
+  age_min: number | null
+  age_max: number | null
   lat: number | null
   lng: number | null
 }
@@ -28,6 +35,7 @@ type Place = {
 function getMissingFields(place: Place) {
   const missing: string[] = []
 
+  if (!place.category) missing.push('category')
   if (!place.short_blurb) missing.push('blurb')
   if (!place.address) missing.push('address')
   if (!place.postcode) missing.push('postcode')
@@ -38,8 +46,10 @@ function getMissingFields(place: Place) {
   if (!place.source_name) missing.push('source name')
   if (!place.source_url) missing.push('source url')
   if (place.distance_minutes === null) missing.push('distance')
+  if (place.age_min === null) missing.push('age min')
+  if (place.age_max === null) missing.push('age max')
   if (place.lat === null) missing.push('lat')
-  if (place.lng === null) missing.push('lng')  
+  if (place.lng === null) missing.push('lng')
 
   return missing
 }
@@ -50,204 +60,154 @@ function getStatus(missingCount: number) {
   return 'Needs enrichment'
 }
 
-export default async function AdminPage() {
+export default async function AdminPage({ searchParams }: AdminPageProps) {
   const isAuthed = await hasAdminSession()
 
   if (!isAuthed) {
     redirect('/admin/login')
   }
 
-  const { data, error } = await supabase
+  const params = (await searchParams) ?? {}
+  const activeFilter = params.filter ?? 'all'
+
+  const { data } = await supabase
     .from('places')
     .select(
-      'id, slug, name, town, category, subcategory, short_blurb, address, postcode, parking_label, coffee_label, website_url, website_notes, source_name, source_url, distance_minutes, lat, lng'
+      'id, slug, name, town, category, subcategory, short_blurb, address, postcode, parking_label, coffee_label, website_url, website_notes, source_name, source_url, distance_minutes, lat, lng, age_min, age_max'
     )
-    .order('name', { ascending: true })
 
-  if (error) {
-    return (
-      <main className="min-h-screen bg-neutral-50 p-4">
-        <div className="mx-auto max-w-5xl">
-          <h1 className="text-2xl font-semibold">Admin</h1>
-          <p className="mt-4 text-red-600">Error: {error.message}</p>
-        </div>
-      </main>
-    )
-  }
+  let places = (data ?? []) as Place[]
 
-  const places = (data ?? []).sort(
+  // sort by most missing first
+  places = places.sort(
     (a, b) => getMissingFields(b).length - getMissingFields(a).length
   )
 
-  const completeCount = places.filter(
-    (place) => getMissingFields(place).length === 0
-  ).length
+  // filters
+  if (activeFilter === 'coords') {
+    places = places.filter((p) => p.lat === null || p.lng === null)
+  }
 
-  const almostThereCount = places.filter((place) => {
-    const missingCount = getMissingFields(place).length
-    return missingCount > 0 && missingCount <= 3
-  }).length
+  if (activeFilter === 'age') {
+    places = places.filter(
+      (p) => p.age_min === null || p.age_max === null
+    )
+  }
 
-  const needsEnrichmentCount = places.filter(
-    (place) => getMissingFields(place).length > 3
-  ).length
+  if (activeFilter === 'category') {
+    places = places.filter((p) => !p.category)
+  }
+
+  if (activeFilter === 'source') {
+    places = places.filter(
+      (p) => !p.source_name || !p.source_url
+    )
+  }
 
   return (
-    <main className="min-h-screen bg-neutral-50 p-4 md:p-6">
+    <main className="min-h-screen bg-neutral-50 p-4">
       <div className="mx-auto max-w-5xl">
-        
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 
-        <div>
-            <p className="text-sm font-medium text-neutral-500">Internal admin</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-neutral-950">
-            Place review board
-            </h1>
-            <p className="mt-2 text-sm text-neutral-600">
-            Use this to spot missing data before you publish more listings.
-            </p>
+        <h1 className="text-2xl font-semibold text-neutral-900">
+          Place review board
+        </h1>
+
+        <Link
+          href="/admin"
+          className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
+        >
+          Back to admin
+        </Link>
+
+        {/* FILTER CHIPS */}
+        <div className="mt-6 flex flex-wrap gap-2">
+          {[
+            { label: 'All', value: 'all' },
+            { label: 'Missing coords', value: 'coords' },
+            { label: 'Missing age', value: 'age' },
+            { label: 'Missing category', value: 'category' },
+            { label: 'Missing source', value: 'source' },
+          ].map((filter) => {
+            const isActive = activeFilter === filter.value
+
+            return (
+              <Link
+                key={filter.value}
+                href={
+                  filter.value === 'all'
+                    ? '/admin'
+                    : `/admin?filter=${filter.value}`
+                }
+                className={`inline-flex rounded-full px-4 py-2 text-sm font-medium ${
+                  isActive
+                    ? 'bg-neutral-900 text-white'
+                    : 'bg-white text-neutral-700 ring-1 ring-neutral-200'
+                }`}
+              >
+                {filter.label}
+              </Link>
+            )
+          })}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-            <Link
-            href="/admin/new"
-            className="inline-flex rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white"
-            >
-            Add new place
-            </Link>
+        <p className="mt-3 text-sm text-neutral-600">
+          Showing {places.length} place{places.length === 1 ? '' : 's'} to review.
+        </p>
 
-            <form action={logoutAdmin}>
-            <button
-                type="submit"
-                className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
-            >
-                Log out
-            </button>
-            </form>
-        </div>
+        {/* TABLE */}
+        <div className="mt-6 space-y-4">
 
-        </header>
-
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div className="rounded-3xl bg-white p-4 shadow-sm">
-                <p className="text-sm text-neutral-500">Complete</p>
-                <p className="mt-2 text-2xl font-semibold text-neutral-950">
-                {completeCount}
-                </p>
-            </div>
-
-            <div className="rounded-3xl bg-white p-4 shadow-sm">
-                <p className="text-sm text-neutral-500">Almost there</p>
-                <p className="mt-2 text-2xl font-semibold text-neutral-950">
-                {almostThereCount}
-                </p>
-            </div>
-
-            <div className="rounded-3xl bg-white p-4 shadow-sm">
-                <p className="text-sm text-neutral-500">Needs enrichment</p>
-                <p className="mt-2 text-2xl font-semibold text-neutral-950">
-                {needsEnrichmentCount}
-                </p>
-            </div>
-        </div>
-
-        <div className="mt-6 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
-          <div className="hidden grid-cols-6 gap-4 border-b border-neutral-200 bg-neutral-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 md:grid">
-            <div>Place</div>
-            <div>Type</div>
-            <div>Town</div>
-            <div>Status</div>
-            <div>Missing fields</div>
-            <div>Links</div>
-          </div>
-
-          <div className="divide-y divide-neutral-200">
-            {places.map((place: Place) => {
+          {places.length > 0 ? (
+            places.map((place) => {
               const missing = getMissingFields(place)
               const status = getStatus(missing.length)
 
               return (
                 <div
                   key={place.id}
-                  className="grid gap-4 px-4 py-4 md:grid-cols-6 md:items-start"
+                  className="rounded-2xl bg-white p-4 shadow-sm"
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-neutral-950">
-                      {place.name}
-                    </p>
-                    <p className="mt-1 text-xs text-neutral-500">
-                      {place.slug ?? 'No slug'}
-                    </p>
-                  </div>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-neutral-900">
+                        {place.name}
+                      </p>
+                      <p className="text-xs text-neutral-600">
+                        {place.town ?? 'Unknown'}
+                      </p>
+                    </div>
 
-                  <div>
-                    <p className="text-sm text-neutral-800">
-                      {place.subcategory ?? place.category ?? 'Uncategorised'}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-neutral-800">
-                      {place.town ?? 'Unknown'}
-                    </p>
-                  </div>
-
-                  <div>
-                    <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                        status === 'Complete'
-                          ? 'bg-green-100 text-green-800'
-                          : status === 'Almost there'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
+                    <Link
+                      href={`/admin/place/${place.id}`}
+                      className="inline-flex rounded-full bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white"
                     >
-                      {status}
-                    </span>
+                      Edit
+                    </Link>
                   </div>
 
-                  <div>
-                    {missing.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {missing.map((item) => (
-                          <span
-                            key={item}
-                            className="rounded-full bg-neutral-100 px-2 py-1 text-xs text-neutral-700"
-                          >
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-neutral-500">None</p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {place.slug ? (
-                      <Link
-                        href={`/admin/place/${place.id}`}
-                        className="inline-flex rounded-full bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white"
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {missing.map((m) => (
+                      <span
+                        key={m}
+                        className="rounded-full bg-neutral-100 px-2 py-1 text-xs text-neutral-600"
                       >
-                        Edit
-                      </Link>
-                    ) : null}
-
-                    {place.website_url ? (
-                      <a
-                        href={place.website_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800"
-                      >
-                        Website
-                      </a>
-                    ) : null}
+                        {m}
+                      </span>
+                    ))}
                   </div>
+
+                  <p className="mt-2 text-xs text-neutral-500">
+                    {status}
+                  </p>
                 </div>
               )
-            })}
-          </div>
+            })
+          ) : (
+            <div className="rounded-2xl bg-white p-6 text-sm text-neutral-600">
+              No places match this admin filter.
+            </div>
+          )}
+
         </div>
       </div>
     </main>
