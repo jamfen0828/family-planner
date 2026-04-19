@@ -44,6 +44,46 @@ const userLocationIcon = new L.DivIcon({
   iconAnchor: [8, 8],
 })
 
+function getPlaceEmoji(place: Place) {
+  const type = (place.subcategory ?? place.category ?? '').toLowerCase()
+
+  if (type.includes('pub')) return '🍺'
+  if (type.includes('park')) return '🌳'
+  if (type.includes('soft play')) return '🎠'
+  if (type.includes('cafe')) return '☕'
+  if (type.includes('farm shop')) return '🛍️'
+  if (type.includes('farm')) return '🐐'
+  if (type.includes('garden centre')) return '🌿'
+  if (type.includes('museum')) return '🏛️'
+
+  return '📍'
+}
+
+function createPlaceIcon(emoji: string) {
+  return new L.DivIcon({
+    className: '',
+    html: `
+      <div style="
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border: 2px solid #111827;
+        border-radius: 9999px;
+        font-size: 18px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      ">
+        ${emoji}
+      </div>
+    `,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -18],
+  })
+}
+
 export function PlacesMap({ places }: { places: Place[] }) {
   useEffect(() => {
     import('@/components/leaflet-marker-fix')
@@ -151,11 +191,16 @@ export function PlacesMap({ places }: { places: Place[] }) {
             </Marker>
           ) : null}
 
-          {placesWithCoords.map((place) => (
-            <Marker
-              key={place.id}
-              position={[place.lat!, place.lng!] as [number, number]}
-            >
+          {placesWithCoords.map((place) => {
+            const emoji = getPlaceEmoji(place)
+            const icon = createPlaceIcon(emoji)
+
+            return (
+              <Marker
+                key={place.id}
+                position={[place.lat!, place.lng!] as [number, number]}
+                icon={icon}
+              >
               <Popup>
                 <div className="space-y-2">
                   <div>
@@ -185,7 +230,7 @@ export function PlacesMap({ places }: { places: Place[] }) {
                 </div>
               </Popup>
             </Marker>
-          ))}
+          )})}
         </MapContainer>
       </div>
     </div>
