@@ -21,6 +21,8 @@ type Place = {
   source_name: string | null
   source_url: string | null
   distance_minutes: number | null
+  lat: number | null
+  lng: number | null
 }
 
 function getMissingFields(place: Place) {
@@ -36,6 +38,8 @@ function getMissingFields(place: Place) {
   if (!place.source_name) missing.push('source name')
   if (!place.source_url) missing.push('source url')
   if (place.distance_minutes === null) missing.push('distance')
+  if (place.lat === null) missing.push('lat')
+  if (place.lng === null) missing.push('lng')  
 
   return missing
 }
@@ -56,7 +60,7 @@ export default async function AdminPage() {
   const { data, error } = await supabase
     .from('places')
     .select(
-      'id, slug, name, town, category, subcategory, short_blurb, address, postcode, parking_label, coffee_label, website_url, website_notes, source_name, source_url, distance_minutes'
+      'id, slug, name, town, category, subcategory, short_blurb, address, postcode, parking_label, coffee_label, website_url, website_notes, source_name, source_url, distance_minutes, lat, lng'
     )
     .order('name', { ascending: true })
 
@@ -222,10 +226,10 @@ export default async function AdminPage() {
                   <div className="flex flex-wrap gap-2">
                     {place.slug ? (
                       <Link
-                        href={`/places/${place.slug}`}
-                        className="rounded-full bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white"
+                        href={`/admin/place/${place.id}`}
+                        className="inline-flex rounded-full bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white"
                       >
-                        View
+                        Edit
                       </Link>
                     ) : null}
 
