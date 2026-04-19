@@ -1,6 +1,6 @@
 'use client'
 
-import '@/components/leaflet-marker-fix'
+import { useEffect } from 'react'
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import L from 'leaflet'
@@ -45,6 +45,9 @@ const userLocationIcon = new L.DivIcon({
 })
 
 export function PlacesMap({ places }: { places: Place[] }) {
+  useEffect(() => {
+    import('@/components/leaflet-marker-fix')
+  }, [])
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null)
   const [locationStatus, setLocationStatus] = useState<
     'idle' | 'loading' | 'granted' | 'denied' | 'error'
