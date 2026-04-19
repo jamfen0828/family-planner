@@ -4,6 +4,21 @@ import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { updatePlace } from '@/app/admin/place/actions'
 
+const CATEGORY_OPTIONS = [
+  'park',
+  'pub',
+  'soft play',
+  'cafe',
+  'farm',
+  'farm shop',
+  'garden centre',
+  'museum',
+]
+
+const PARKING_OPTIONS = ['Easy', 'Limited', 'Tricky', 'None']
+
+const COFFEE_OPTIONS = ['Good', 'Basic', 'None']
+
 export function EditPlaceForm({ place }: { place: any }) {
   const [name, setName] = useState(place.name ?? '')
   const [town, setTown] = useState(place.town ?? '')
@@ -76,6 +91,55 @@ export function EditPlaceForm({ place }: { place: any }) {
     setSuccess(false)
     setGeocodeMessage(null)
 
+        const ageMinNumber =
+      ageMin === '' ? null : Number(ageMin)
+
+    const ageMaxNumber =
+      ageMax === '' ? null : Number(ageMax)
+
+    if (ageMin !== '' && Number.isNaN(ageMinNumber)) {
+      setError('Age min must be a number.')
+      return
+    }
+
+    if (ageMax !== '' && Number.isNaN(ageMaxNumber)) {
+      setError('Age max must be a number.')
+      return
+    }
+
+    if (
+      ageMinNumber !== null &&
+      ageMaxNumber !== null &&
+      ageMinNumber > ageMaxNumber
+    ) {
+      setError('Age min cannot be greater than age max.')
+      return
+    }
+
+    if (
+      parkingLabel &&
+      !PARKING_OPTIONS.includes(parkingLabel)
+    ) {
+      setError('Choose a valid parking label.')
+      return
+    }
+
+    if (
+      coffeeLabel &&
+      !COFFEE_OPTIONS.includes(coffeeLabel)
+    ) {
+      setError('Choose a valid coffee label.')
+      return
+    }
+
+    if (
+      category &&
+      !CATEGORY_OPTIONS.includes(category)
+    ) {
+      setError('Choose a valid category.')
+      return
+    }
+
     const formData = new FormData()
     formData.set('id', String(place.id))
     formData.set('name', String(name))
@@ -132,13 +196,19 @@ export function EditPlaceForm({ place }: { place: any }) {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-neutral-600">Category</label>
-          <input
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
-            placeholder="park, pub, soft play, cafe"
-          />
+            <label className="text-xs font-medium text-neutral-600">Category</label>
+            <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
+            >
+                <option value="">Select category</option>
+                {CATEGORY_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                    {option}
+                </option>
+                ))}
+            </select>
         </div>
 
         <div>
@@ -150,6 +220,9 @@ export function EditPlaceForm({ place }: { place: any }) {
             placeholder="pub with garden"
           />
         </div>
+        <p className="mt-1 text-xs text-neutral-500">
+            Example: pub with garden, cafe with play area
+        </p>
       </section>
 
       <section className="space-y-4">
@@ -186,41 +259,55 @@ export function EditPlaceForm({ place }: { place: any }) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-neutral-600">Age min</label>
-            <input
-              value={ageMin}
-              onChange={(e) => setAgeMin(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
-            />
+                <input
+                type="number"
+                value={ageMin}
+                onChange={(e) => setAgeMin(e.target.value)}
+                className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
+                />
           </div>
 
           <div>
             <label className="text-xs font-medium text-neutral-600">Age max</label>
-            <input
-              value={ageMax}
-              onChange={(e) => setAgeMax(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
-            />
+                <input
+                type="number"
+                value={ageMax}
+                onChange={(e) => setAgeMax(e.target.value)}
+                className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
+                />
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-neutral-600">Parking label</label>
-          <input
+        <label className="text-xs font-medium text-neutral-600">Parking label</label>
+        <select
             value={parkingLabel}
             onChange={(e) => setParkingLabel(e.target.value)}
             className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
-            placeholder="Easy, Limited, Tricky, None"
-          />
+        >
+            <option value="">Select parking label</option>
+            {PARKING_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+                {option}
+            </option>
+            ))}
+        </select>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-neutral-600">Coffee label</label>
-          <input
+        <label className="text-xs font-medium text-neutral-600">Coffee label</label>
+        <select
             value={coffeeLabel}
             onChange={(e) => setCoffeeLabel(e.target.value)}
             className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
-            placeholder="Good, Basic, None"
-          />
+        >
+            <option value="">Select coffee label</option>
+            {COFFEE_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+                {option}
+            </option>
+            ))}
+        </select>
         </div>
       </section>
 
