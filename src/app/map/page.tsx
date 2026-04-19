@@ -44,7 +44,7 @@ export default async function MapPage() {
               Explore places on the map
             </h1>
             <p className="mt-2 text-sm leading-6 text-neutral-600">
-              See what’s nearby and jump straight into place details.
+              See what’s nearby, center the map on you, and jump straight into place details.
             </p>
           </div>
 
