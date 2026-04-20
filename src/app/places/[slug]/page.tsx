@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { SaveButton } from '@/components/save-button'
+import { PlaceSignals } from '@/components/place-signals'
 
 function formatAgeRange(ageMin: number | null, ageMax: number | null) {
   if (ageMin === null && ageMax === null) return 'All ages'
@@ -239,6 +240,8 @@ export default async function PlacePage({ params }: PlacePageProps) {
             </p>
           </section>
         ) : null}
+
+        <PlaceSignals placeId={place.id} />
       </div>
     </main>
   )

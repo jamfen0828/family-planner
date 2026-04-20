@@ -108,16 +108,16 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     <main className="min-h-screen bg-neutral-50 p-4">
       <div className="mx-auto max-w-5xl">
 
+    <Link
+      href="/"
+      className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
+    >
+      ← Back to app
+    </Link>
+
         <h1 className="text-2xl font-semibold text-neutral-900">
           Place review board
         </h1>
-
-        <Link
-          href="/admin"
-          className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-200"
-        >
-          Back to admin
-        </Link>
 
         {/* FILTER CHIPS */}
         <div className="mt-6 flex flex-wrap gap-2">

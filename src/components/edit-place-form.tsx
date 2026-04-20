@@ -448,11 +448,11 @@ export function EditPlaceForm({ place }: { place: any }) {
 
         <div className="flex gap-3">
           <Link
-            href="/admin"
+            href="/"
             className="inline-flex text-sm font-medium text-neutral-700 underline-offset-4 hover:underline"
-          >
-            Back to admin
-          </Link>
+            >
+            Back to app
+            </Link>
 
           {place.slug ? (
             <Link
