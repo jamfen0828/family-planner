@@ -64,14 +64,16 @@ export function SavedPlacesClient() {
   return (
     <main className="min-h-screen bg-neutral-50 p-4">
       <div className="mx-auto max-w-md">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-medium text-neutral-500">Saved places</p>
+            <p className="text-sm font-medium text-neutral-500">
+              Saved places
+            </p>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-neutral-950">
-              Your favourites
+              Your shortlist
             </h1>
             <p className="mt-2 text-sm leading-6 text-neutral-600">
-              Keep a shortlist of places you want to come back to.
+              Keep the best options in one place for easy weekend planning.
             </p>
           </div>
 
@@ -89,7 +91,7 @@ export function SavedPlacesClient() {
           </div>
         ) : favorites.length === 0 ? (
           <div className="mt-6 rounded-3xl bg-white p-6 text-sm leading-6 text-neutral-600 shadow-sm">
-            You haven’t saved any places yet. Tap <span className="font-medium text-neutral-900">Save</span> on a place card to build your shortlist.
+            You haven’t saved any places yet. Start building a shortlist for your next day out.
           </div>
         ) : (
           <>

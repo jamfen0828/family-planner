@@ -1,6 +1,6 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { SaveButton } from '@/components/save-button'
-import Image from 'next/image'
 
 type PlaceCardProps = {
   place: {
@@ -29,85 +29,90 @@ export function PlaceCard({ place }: PlaceCardProps) {
   return (
     <Link
       href={href}
-      className="block rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+      className="group block overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
-    {place.image_url ? (
-      <div className="mb-4 overflow-hidden rounded-2xl">
-        <Image
-          src={place.image_url}
-          alt={place.name}
-          width={800}
-          height={500}
-          className="h-44 w-full object-cover"
-        />
-      </div>
-    ) : (
-      <div className="mb-4 flex h-44 w-full items-center justify-center rounded-2xl bg-neutral-100 text-sm text-neutral-500">
-        No image yet
-      </div>
-    )}  
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-            {place.subcategory ?? place.category ?? 'Place'}
-          </p>
-          <h2 className="mt-1 text-lg font-semibold text-neutral-900">
-            {place.name}
-          </h2>
-          <p className="mt-1 text-sm text-neutral-600">
-            {place.town ?? 'Unknown town'}
-            {place.distance_minutes ? ` · ${place.distance_minutes} mins away` : ''}
-          </p>
+      {place.image_url ? (
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100">
+          <Image
+            src={place.image_url}
+            alt={place.name}
+            fill
+            className="object-cover transition duration-300 group-hover:scale-[1.02]"
+            sizes="(max-width: 768px) 100vw, 420px"
+          />
         </div>
-
-        <div className="flex items-center gap-2">
-          <div className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700">
-            {place.free ? 'Free' : place.price_label ?? 'Paid'}
-          </div>
-
-          {place.slug ? <SaveButton slug={place.slug} /> : null}
+      ) : (
+        <div className="flex aspect-[4/3] w-full items-center justify-center bg-neutral-100 text-sm text-neutral-500">
+          No image yet
         </div>
-      </div>
-
-      {place.short_blurb && (
-        <p className="mt-3 text-sm leading-6 text-neutral-700">
-          {place.short_blurb}
-        </p>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        {place.indoor ? (
-          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
-            Indoor
-          </span>
-        ) : null}
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              {place.subcategory ?? place.category ?? 'Place'}
+            </p>
+            <h2 className="mt-1 text-lg font-semibold text-neutral-900">
+              {place.name}
+            </h2>
+            <p className="mt-1 text-sm text-neutral-600">
+              {place.town ?? 'Unknown town'}
+              {place.distance_minutes
+                ? ` · ${place.distance_minutes} mins away`
+                : ''}
+            </p>
+          </div>
 
-        {place.outdoor ? (
-          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
-            Outdoor
-          </span>
-        ) : null}
+          <div className="flex items-center gap-2">
+            <div className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700">
+              {place.free ? 'Free' : place.price_label ?? 'Paid'}
+            </div>
 
-        {place.scoot_friendly ? (
-          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
-            Scoot friendly
-          </span>
-        ) : null}
-      </div>
-
-      <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl bg-neutral-50 p-3">
-        <div>
-          <p className="text-xs text-neutral-500">Parking</p>
-          <p className="mt-1 text-sm font-medium text-neutral-900">
-            {place.parking_label ?? 'Unknown'}
-          </p>
+            {place.slug ? <SaveButton slug={place.slug} /> : null}
+          </div>
         </div>
 
-        <div>
-          <p className="text-xs text-neutral-500">Coffee</p>
-          <p className="mt-1 text-sm font-medium text-neutral-900">
-            {place.coffee_label ?? 'Unknown'}
+        {place.short_blurb && (
+          <p className="mt-3 text-sm leading-6 text-neutral-700">
+            {place.short_blurb}
           </p>
+        )}
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {place.indoor ? (
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+              Indoor
+            </span>
+          ) : null}
+
+          {place.outdoor ? (
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+              Outdoor
+            </span>
+          ) : null}
+
+          {place.scoot_friendly ? (
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+              Scoot friendly
+            </span>
+          ) : null}
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl bg-neutral-50 p-3">
+          <div>
+            <p className="text-xs text-neutral-500">Parking</p>
+            <p className="mt-1 text-sm font-medium text-neutral-900">
+              {place.parking_label ?? 'Unknown'}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs text-neutral-500">Coffee</p>
+            <p className="mt-1 text-sm font-medium text-neutral-900">
+              {place.coffee_label ?? 'Unknown'}
+            </p>
+          </div>
         </div>
       </div>
     </Link>
