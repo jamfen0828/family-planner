@@ -20,7 +20,7 @@ export default async function Home({ searchParams }: HomeProps) {
   let query = supabase
     .from('places')
     .select(
-      'id, slug, name, town, category, subcategory, price_label, short_blurb, distance_minutes, free, parking_label, coffee_label, indoor, outdoor, scoot_friendly, age_min, age_max, lat, lng'
+      'id, slug, name, town, category, subcategory, price_label, short_blurb, distance_minutes, free, parking_label, coffee_label, indoor, outdoor, scoot_friendly, age_min, age_max, lat, lng, image_url'
     )
     .order('distance_minutes', { ascending: true, nullsFirst: false })
 

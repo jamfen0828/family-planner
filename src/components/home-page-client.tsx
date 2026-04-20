@@ -24,6 +24,7 @@ type Place = {
   age_max: number | null
   lat: number | null
   lng: number | null
+  image_url: string | null
 }
 
 type HomePageClientProps = {

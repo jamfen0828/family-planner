@@ -39,6 +39,7 @@ export async function updatePlace(formData: FormData) {
     website_notes: toNullableText(formData.get('website_notes')),
     source_name: toNullableText(formData.get('source_name')),
     source_url: toNullableText(formData.get('source_url')),
+    image_url: toNullableText(formData.get('image_url')),
     lat: toNullableNumber(formData.get('lat')),
     lng: toNullableNumber(formData.get('lng')),
   }

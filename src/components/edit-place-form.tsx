@@ -42,6 +42,7 @@ export function EditPlaceForm({ place }: { place: any }) {
   const [geocodeMessage, setGeocodeMessage] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const [isGeocoding, setIsGeocoding] = useState(false)
+  const [imageUrl, setImageUrl] = useState(place.image_url ?? '')
 
   async function handleGeocode() {
     setError(null)
@@ -158,6 +159,7 @@ export function EditPlaceForm({ place }: { place: any }) {
     formData.set('source_url', String(sourceUrl))
     formData.set('lat', String(lat))
     formData.set('lng', String(lng))
+    formData.set('image_url', String(imageUrl))
 
     startTransition(async () => {
       const result = await updatePlace(formData)
@@ -249,6 +251,35 @@ export function EditPlaceForm({ place }: { place: any }) {
             className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
           />
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
+          Image
+        </h2>
+
+        <div>
+          <label className="text-xs font-medium text-neutral-600">Image URL</label>
+          <input
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            className="mt-1 w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm text-neutral-900"
+            placeholder="https://..."
+          />
+          <p className="mt-1 text-xs text-neutral-500">
+            Paste a public image URL for now.
+          </p>
+        </div>
+
+        {imageUrl ? (
+          <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50">
+            <img
+              src={imageUrl}
+              alt="Preview"
+              className="h-48 w-full object-cover"
+            />
+          </div>
+        ) : null}
       </section>
 
       <section className="space-y-4">

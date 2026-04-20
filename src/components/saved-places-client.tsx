@@ -22,6 +22,7 @@ type Place = {
   indoor: boolean | null
   outdoor: boolean | null
   scoot_friendly: boolean | null
+  image_url: string | null
 }
 
 export function SavedPlacesClient() {
@@ -40,7 +41,7 @@ export function SavedPlacesClient() {
       const { data, error } = await supabase
         .from('places')
         .select(
-          'id, slug, name, town, category, subcategory, price_label, short_blurb, distance_minutes, free, parking_label, coffee_label, indoor, outdoor, scoot_friendly'
+          'id, slug, name, town, category, subcategory, price_label, short_blurb, distance_minutes, free, parking_label, coffee_label, indoor, outdoor, scoot_friendly, image_url'
         )
         .in('slug', favorites)
 

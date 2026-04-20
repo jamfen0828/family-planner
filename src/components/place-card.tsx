@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { SaveButton } from '@/components/save-button'
+import Image from 'next/image'
 
 type PlaceCardProps = {
   place: {
@@ -18,6 +19,7 @@ type PlaceCardProps = {
     indoor: boolean | null
     outdoor: boolean | null
     scoot_friendly: boolean | null
+    image_url: string | null
   }
 }
 
@@ -29,6 +31,21 @@ export function PlaceCard({ place }: PlaceCardProps) {
       href={href}
       className="block rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
+    {place.image_url ? (
+      <div className="mb-4 overflow-hidden rounded-2xl">
+        <Image
+          src={place.image_url}
+          alt={place.name}
+          width={800}
+          height={500}
+          className="h-44 w-full object-cover"
+        />
+      </div>
+    ) : (
+      <div className="mb-4 flex h-44 w-full items-center justify-center rounded-2xl bg-neutral-100 text-sm text-neutral-500">
+        No image yet
+      </div>
+    )}  
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
